@@ -8,3 +8,5 @@
 *.ipch
 *.db
 *.opendb
+*.ilk
+*.exe
