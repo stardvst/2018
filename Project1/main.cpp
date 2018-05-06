@@ -1,23 +1,27 @@
 #include <iostream>
+#include <array>
 
-// unsigned int => num % 2 => 0 or 1
-
-void isOne(int i)
+struct NonMovable
 {
-	if (i == 1) std::cout << "one\n";
-	else std::cout << "not one\n";
+	NonMovable(int i) { std::cout << "Non movable " << i << " created.\n"; }
+	NonMovable(const NonMovable &) = delete;
+	NonMovable(NonMovable &&) = delete;
+
+	std::array<int, 1024> arr;
+};
+
+NonMovable make()
+{
+	// c++14 will try to move this temp
+	// C++17 will construct in place; however, this won't work:
+	// auto obj = NonMovable(42);
+	// return obj;
+	return NonMovable(42);
 }
 
 int main()
 {
-	struct { int a : 1; } s;
-	struct { unsigned int a : 1; } t;
-
-	s.a = 1;
-	t.a = 3;
-
-	isOne(s.a);
-	isOne(t.a);
+	auto largeNonMovObj = make();
 
 	std::cin.get();
 	return 0;
