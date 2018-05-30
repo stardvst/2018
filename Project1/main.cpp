@@ -1,27 +1,24 @@
 #include <iostream>
+#include <vector>
+#include <memory>
 
-struct C
+struct ABC
 {
-	C() = default;
-	C(const C&) { std::cout << "A copy was made.\n"; }
+	~ABC() { std::cout << "dtor\n"; }
+	std::shared_ptr<ABC> other;
 };
-
-C f()
-
-{
-	// calls copy ctor
-	/*C c;
-	return c;*/
-
-	// doesn't call copy ctor
-	return C();
-}
 
 int main()
 {
-	std::cout << "Hello World!\n";
-	C obj = f();
+	{
+		std::shared_ptr<ABC> a1(new ABC);
+		std::shared_ptr<ABC> a2(new ABC);
 
+		a1->other = a2;
+		// a2->other = a1;
+
+		std::cout << a1.use_count() << ", " << a2.use_count() << '\n';
+	}
 	std::cin.get();
 	return 0;
 }
