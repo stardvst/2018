@@ -1,35 +1,44 @@
 #include <iostream>
 
+
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+#include <memory>
+
 class Foo
 {
 public:
-	static Foo *create()
+	Foo()
 	{
-		return new Foo;
+		std::cout << "ctor\n";
 	}
-	~Foo() {}
 
-	// error message says "... is a deleted function" - very clear
-	Foo(const Foo &) = delete;
-	Foo &operator=(const Foo &) = delete;
+	void *operator new(size_t) = delete;
+	void *operator new(size_t, void *) = delete;
+	void *operator new[](size_t) = delete;
+	void *operator new[](size_t, void *) = delete;
 
-private:
-
-	// error message says "... is private" - not clear whether it's just private or not allowed to do
-	Foo(const Foo &) {}
-	Foo &operator=(const Foo &) {}
-
-	Foo() { std::cout << "created\n"; }
 };
 
 void f(Foo foo)
 {
+
 }
 
 int main()
 {
-	Foo *foo = Foo::create();
-	f(*foo);
+	//auto foo = new Foo;
+
+	//Foo *foos = new Foo[5];
+
+	/*void *pn = malloc(sizeof(Foo));
+	auto foopn = new (pn) Foo;*/
+
+	/*void *apn = malloc(5 * sizeof(Foo));
+	auto fooapn = new (apn) Foo[5];*/
+
+	Foo foo;
 
 	std::cin.get();
 	return 0;
