@@ -1,44 +1,25 @@
 #include <iostream>
-
-
 #include <vector>
-#include <unordered_map>
-#include <iostream>
-#include <memory>
 
-class Foo
+std::vector<bool> GetPrimes(const int n)
 {
-public:
-	Foo()
-	{
-		std::cout << "ctor\n";
-	}
-
-	void *operator new(size_t) = delete;
-	void *operator new(size_t, void *) = delete;
-	void *operator new[](size_t) = delete;
-	void *operator new[](size_t, void *) = delete;
-
-};
-
-void f(Foo foo)
-{
-
+	std::vector<bool> primes(n + 1, true);
+	for (auto i = 2; i <= n; ++i)
+		if (primes[i])
+			for (auto j = 2; j * i <= n; ++j)
+				primes[j * i] = false;
+	return primes;
 }
 
 int main()
 {
-	//auto foo = new Foo;
-
-	//Foo *foos = new Foo[5];
-
-	/*void *pn = malloc(sizeof(Foo));
-	auto foopn = new (pn) Foo;*/
-
-	/*void *apn = malloc(5 * sizeof(Foo));
-	auto fooapn = new (apn) Foo[5];*/
-
-	Foo foo;
+	int a;
+	std::cout << "Enter number, Henrik!: ";
+	std::cin >> a;
+	auto primes = GetPrimes(a);
+	for (std::size_t i = 2; i < primes.size(); ++i)
+		if (primes[i])
+			std::cout << i << ", ";
 
 	std::cin.get();
 	return 0;
