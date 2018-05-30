@@ -1,35 +1,26 @@
-#include <numeric>
 #include <iostream>
 
-template <unsigned int N>
-struct UINT
+// is T class?
+
+template <typename T>
+struct IsClassT
 {
-	using type = UINT<N>;
-	using value_type = unsigned int;
-	static constexpr unsigned int value = N;
-	using next = UINT<N + 1>;
-	using prev = UINT<N - 1>;
+	static bool is;
+private:
+	template <typename C>
+	static bool test(int C::*) { return true; }
+
+	template <typename C>
+	static bool test(...) { return false; }
 };
 
-template <>
-struct UINT<0>
-{
-	using type = UINT<0>;
-	using value_type = unsigned int;
-	static constexpr unsigned int value = 0;
-	using next = UINT<1>;
-	using prev = UINT<0>;
-};
-
-template <unsigned int N>
-struct binary : UINT<binary<N / 10>::type::value * 2 + (N % 10)> {};
-
-template <>
-struct binary<0> : UINT<0> {};
+template <typename T>
+bool IsClassT<T>::is = IsClassT<T>::test<T>(0);
 
 int main()
 {
-	std::cout << binary<101>::value;
+	std::cout << IsClassT<std::string>::is << '\n';
+	std::cout << IsClassT<int>::is << '\n';
 
 	std::cin.get();
 	return 0;
