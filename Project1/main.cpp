@@ -1,26 +1,30 @@
 #include <iostream>
 
-// is T class?
-
-template <typename T>
-struct IsClassT
+struct C
 {
-	static bool is;
-private:
-	template <typename C>
-	static bool test(int C::*) { return true; }
-
-	template <typename C>
-	static bool test(...) { return false; }
+	C() {}
+	C(const C&) { std::cout << "Hello World!\n"; }
 };
 
-template <typename T>
-bool IsClassT<T>::is = IsClassT<T>::test<T>(0);
+void f()
+{
+	C c;
+	throw c; // copying the named object c into the exception object.
+			 // It is unclear whether this copy may be elided.
+}
 
 int main()
 {
-	std::cout << IsClassT<std::string>::is << '\n';
-	std::cout << IsClassT<int>::is << '\n';
+	try
+	{
+		f();
+	}
+	catch (C c)
+	{
+		c;
+		// copying the exception object into the temporary in the exception declaration.
+		// It is also unclear whether this copy may be elided.
+	}             
 
 	std::cin.get();
 	return 0;
