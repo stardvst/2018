@@ -1,24 +1,28 @@
-#include <iostream>
 #include <vector>
-#include <memory>
+#include <numeric>
+#include <string>
+#include <iostream>
 
-struct ABC
+template <int N>
+struct INT
 {
-	~ABC() { std::cout << "dtor\n"; }
-	std::shared_ptr<ABC> other;
+	using type = INT<N>;
+	using value_type = int;
+	static constexpr int value = N;
+	using next = INT<N + 1>;
+	using prev = INT<N - 1>;
 };
+
+template <typename T, typename N>
+struct plus : INT<T::value + N::value> {};
+
+template <typename T, typename N>
+struct minus : INT<T::value - N::value> {};
 
 int main()
 {
-	{
-		std::shared_ptr<ABC> a1(new ABC);
-		std::shared_ptr<ABC> a2(new ABC);
+	std::cout << plus<INT<5>, INT<3>>::value;
 
-		a1->other = a2;
-		// a2->other = a1;
-
-		std::cout << a1.use_count() << ", " << a2.use_count() << '\n';
-	}
 	std::cin.get();
 	return 0;
 }
