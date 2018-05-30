@@ -1,30 +1,37 @@
 #include <iostream>
 
-struct C
+struct Base
 {
-	C() {}
-	C(const C&) { std::cout << "Hello World!\n"; }
+	virtual void f() { std::cout << "Base::f()" << std::endl; }
 };
 
-void f()
+struct Derived :Base
 {
-	C c;
-	throw c; // copying the named object c into the exception object.
-			 // It is unclear whether this copy may be elided.
+	virtual void f() override { std::cout << "Derived::f()" << std::endl; }
+};
+
+void SomeMethod(Base *object, void (Base::*ptr)())
+{
+	(object->*ptr)();
 }
+
+//void SomeMethod(Base &object, void (Base::*ptr)())
+//{
+//    (object.*ptr)();    
+//}
 
 int main()
 {
-	try
-	{
-		f();
-	}
-	catch (C c)
-	{
-		c;
-		// copying the exception object into the temporary in the exception declaration.
-		// It is also unclear whether this copy may be elided.
-	}             
+	Base b;
+	Derived d;
+	Base* p = &b;
+
+	//SomeMethod(b, &Base::f); // calls Base::f()
+	//SomeMethod(d, &Base::f); // calls Derived::f()
+	
+	SomeMethod(p, &Base::f); // calls Base::f()
+	p = &d;
+	SomeMethod(p, &Base::f); // calls Derived::f()
 
 	std::cin.get();
 	return 0;
