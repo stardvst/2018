@@ -15,29 +15,27 @@ public:
 		delete m_text;
 	}
 
-	char &operator[](std::size_t position) const
+	std::size_t length() const
 	{
-		return m_text[position];
-	}
-
-	char *get() const
-	{
-		return m_text;
+		if (!lengthIsValid)
+		{
+			m_length = std::strlen(m_text);
+			lengthIsValid = true;
+		}
+		return m_length;
 	}
 
 private:
 	char *m_text;
+	mutable std::size_t m_length;
+	mutable bool lengthIsValid {false};
 };
 
 int main()
 {
 	const TextBlock cctb("Hello");
 
-	char *pc = &cctb[0];
-
-	*pc = 'J';
-
-	std::cout << cctb.get(); // Jello... what?!
+	std::cout << cctb.length();
 		
 	std::cin.get();
 	return 0;
