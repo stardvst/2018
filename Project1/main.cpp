@@ -1,42 +1,49 @@
 #include <iostream>
-#include <cstring>
 
 class TextBlock
 {
 public:
-	TextBlock(const char *pText)
+	TextBlock(const std::string &text)
+		: m_text(text)
 	{
-		m_text = new char[strlen(pText)];
-		strcpy(m_text, pText);
 	}
 
-	~TextBlock()
+	const char &operator[](std::size_t position) const
 	{
-		delete m_text;
+		// ...
+		// ...
+		// ...
+		return m_text[position];
 	}
 
-	std::size_t length() const
+	char &operator[](std::size_t position)
 	{
-		if (!lengthIsValid)
-		{
-			m_length = std::strlen(m_text);
-			lengthIsValid = true;
-		}
-		return m_length;
+		//// ...
+		//// ...
+		//// ...
+		//return m_text[position];
+		
+		return 
+			const_cast<char &>(
+				static_cast<const TextBlock &>(*this)[position]
+			);
 	}
 
 private:
-	char *m_text;
-	mutable std::size_t m_length;
-	mutable bool lengthIsValid {false};
+	std::string m_text;
 };
 
 int main()
 {
-	const TextBlock cctb("Hello");
+	TextBlock tb("Hello");
+	std::cout << tb[0] << '\n';
+	tb[0] = 'x';
+	std::cout << tb[0] << '\n';
 
-	std::cout << cctb.length();
-		
+	const TextBlock ctb("World");
+	std::cout << ctb[0] << '\n';
+	//ctb[0] = 'y';
+
 	std::cin.get();
 	return 0;
 }
