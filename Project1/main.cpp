@@ -1,30 +1,41 @@
 #include <iostream>
-#include <vector>
+
+class TextBlock
+{
+public:
+	TextBlock(const std::string &text)
+		: m_text(text)
+	{
+	}
+
+	const char &operator[](std::size_t position) const
+	{
+		std::cout << "const version: ";
+		return m_text[position];
+	}
+
+	// char won't work
+	char &operator[](std::size_t position)
+	{
+		std::cout << "non-const version: ";
+		return m_text[position];
+	}
+
+private:
+	std::string m_text;
+};
 
 int main()
 {
-	std::vector<int> vec { 4,7,9,3 };
+	TextBlock tb("Hello");
+	std::cout << tb[0] << '\n';
+	tb[0] = 'x';
+	std::cout << tb[0] << '\n';
 
-	// T *const
-	const std::vector<int>::iterator it = vec.begin();
-	std::cout << *it << '\n';
-
-	// try to modify iterator, and fail
-	//it = vec.end();
-	// now modify value
-	*it = 10;
-	std::cout << *(vec.begin()) << '\n';
-
-	// const T *
-	std::vector<int>::const_iterator cit = vec.begin();
-
-	// try to modify value, and fail
-	//*cit = 8;
-	// now modify iterator
-	cit = vec.begin() + 2;
-	std::cout << *cit << '\n';
-
-
+	const TextBlock ctb("World");
+	std::cout << ctb[0] << '\n';
+	//ctb[0] = 'y';
+		
 	std::cin.get();
 	return 0;
 }
