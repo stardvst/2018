@@ -1,40 +1,43 @@
 #include <iostream>
+#include <cstring>
 
 class TextBlock
 {
 public:
-	TextBlock(const std::string &text)
-		: m_text(text)
+	TextBlock(const char *pText)
 	{
+		m_text = new char[strlen(pText)];
+		strcpy(m_text, pText);
 	}
 
-	const char &operator[](std::size_t position) const
+	~TextBlock()
 	{
-		std::cout << "const version: ";
+		delete m_text;
+	}
+
+	char &operator[](std::size_t position) const
+	{
 		return m_text[position];
 	}
 
-	// char won't work
-	char &operator[](std::size_t position)
+	char *get() const
 	{
-		std::cout << "non-const version: ";
-		return m_text[position];
+		return m_text;
 	}
 
 private:
-	std::string m_text;
+	char *m_text;
 };
 
 int main()
 {
-	TextBlock tb("Hello");
-	std::cout << tb[0] << '\n';
-	tb[0] = 'x';
-	std::cout << tb[0] << '\n';
+	const TextBlock cctb("Hello");
 
-	const TextBlock ctb("World");
-	std::cout << ctb[0] << '\n';
-	//ctb[0] = 'y';
+	char *pc = &cctb[0];
+
+	*pc = 'J';
+
+	std::cout << cctb.get(); // Jello... what?!
 		
 	std::cin.get();
 	return 0;
