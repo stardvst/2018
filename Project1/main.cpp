@@ -1,49 +1,30 @@
 #include <iostream>
 
-class TextBlock
+class A
 {
 public:
-	TextBlock(const std::string &text)
-		: m_text(text)
+	A()
 	{
+		std::cout << "ctor\n";
 	}
 
-	const char &operator[](std::size_t position) const
+	~A()
 	{
-		// ...
-		// ...
-		// ...
-		return m_text[position];
+		std::cout << "dtor\n";
 	}
-
-	char &operator[](std::size_t position)
-	{
-		//// ...
-		//// ...
-		//// ...
-		//return m_text[position];
-		
-		return 
-			const_cast<char &>(
-				static_cast<const TextBlock &>(*this)[position]
-			);
-	}
-
-private:
-	std::string m_text;
 };
+
+// global object
+A a;
 
 int main()
 {
-	TextBlock tb("Hello");
-	std::cout << tb[0] << '\n';
-	tb[0] = 'x';
-	std::cout << tb[0] << '\n';
-
-	const TextBlock ctb("World");
-	std::cout << ctb[0] << '\n';
-	//ctb[0] = 'y';
+	auto a = new A;
+	static auto b = new A;
 
 	std::cin.get();
+
+	// both dtors are called
+
 	return 0;
 }
