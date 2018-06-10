@@ -1,67 +1,43 @@
 #include <iostream>
 
-class B
+class Transaction
 {
 public:
-	B(int b) : m_b(b)
+	Transaction()
 	{
-		std::cout << "ctor B " << b << "\n";
+		log();
 	}
 
-	~B()
+	virtual void log() const = 0
 	{
-		std::cout << "dtor B " << m_b << "\n";
+		std::cout << "Transaction::log\n";
 	}
-
-	void print()
-	{
-		std::cout << "B::print " << m_b << "\n";
-	}
-
-private:
-	int m_b;
 };
 
-class A
+class BuyTransaction : public Transaction
 {
 public:
-	A(int a) : m_a(a)
+	void log() const override
 	{
-		std::cout << "ctor A " << a << "\n";
+		std::cout << "BuyTransaction::log\n";
 	}
-
-	~A()
-	{
-		std::cout << "dtor A " << m_a << "\n";
-	}
-
-private:
-	static B b;
-	int m_a;
 };
 
-B A::b(7);
-
-// global object
-A a(1);
+class SellTransaction : public Transaction
+{
+public:
+	void log() const override
+	{
+		std::cout << "SellTransaction::log\n";
+	}
+};
 
 int main()
 {
-	auto a = new A(2);
-	static auto b = new A(3);
-
-	int aa, bb;
-	std::cin >> aa;
-	std::cin >> bb;
-	if (aa + bb < 10)
-	{
-		static B b(4);
-		b.print();
-	}
+	// Transaction::log has no body -> linker error
+	// Transaction::log has body -> calls Transaction::log(). hmmm
+	BuyTransaction b;
 
 	std::cin.get();
-
-	// both dtors are called
-
 	return 0;
 }
