@@ -1,89 +1,42 @@
 #include <iostream>
-#include <typeinfo>
-#include <array>
+#include <vector>
 
-// case 1
-template <typename T>
-void f(const T &param)
-{
-	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
-}
-
-template <typename T>
-void f(T& param)
-{
-	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
-}
-
-template <typename T>
-void f(T *param)
-{
-	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
-}
-
-// case 2
-template <typename T>
-void f(T &&param)
-{
-	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
-}
-
-// case 3
 template <typename T>
 void f(T param)
 {
 	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
 }
 
-template <typename T, std::size_t N>
-constexpr std::size_t arraySize(T(&)[N]) noexcept
-{
-	return N;
-}
-
-// fn -> fn ptr
-void someFunc(int a, double b)
-{
-	std::cout << a << ' ' << b << '\n';
-}
-
 template <typename T>
-void f1(T param)
+void f(std::initializer_list<T> param)
 {
 	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
 }
 
-template <typename T>
-void f2(T &param)
-{
-	std::cout << __FUNCSIG__ << ": " << typeid(param).name() << '\n';
-}
+// template, not type-deduction
+//auto createInitList()
+//{
+//	return { 1,2,3 };
+//}
 
 int main()
 {
-	int x = 0;
-	f(x);
+	auto x1 = 27;
+	auto x2(27);
+	auto x3 = { 27 };
+	auto x4{ 27 };
 
-	x = 27;
-	const int cx = x;
-	const int &rx = x;
+	auto x5 = { 4,6,7 };
+	f(x5);
 
-	const int *px = &x;
-	f(px);
+	//f({ 11, 23, 9 });
 
-	const char *const ptr = "Fun with pointers";
-	f(ptr);
 
-	const char name[] = "J. P. Briggs";
-	const char *ptrToName = name;
-	f(name);
+	// template, not type-deduction
+	std::vector<int> v;
+	auto resetV = [&v](const auto &newValue) { v = newValue; };
 
-	int keyVals[] = { 1,3,7,9,11,22,35 };
-	std::array<int, arraySize(keyVals)> mappedVals;
-	//int mappedVals[arraySize(keyVals)];
-
-	f1(someFunc);
-	f2(someFunc);
+	resetV({ 1,2,3 });
 
 	std::cin.get();
 	return 0;
