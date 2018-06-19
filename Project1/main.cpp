@@ -1,46 +1,51 @@
 #include <iostream>
+#include <deque>
 
-class Base
+// v1
+template <typename Container, typename Index>
+auto authAndAccess(Container &c, Index i) -> decltype(c[i])
 {
-public:
-	Base(int a = 0, int b = 0) : m_a(a), m_b(b) { }
-	int a() const { return m_a; }
-	int b() const { return m_b; }
+	return c[i];
+}
 
-	// doesn't copy b, oops!
-	Base(const Base &base) : m_a(base.m_a) { }
-
-private:
-	int m_a;
-	int m_b;
-};
-
-class Derived : public Base
+// v2
+template <typename Container, typename Index>
+auto authAndAccess(Container &c, Index i)
 {
-public:
-	Derived(int a, int b, int c) : Base(a, b), m_c(c) {}
-	int c() const { return m_c; }
+	return c[i];
+}
 
-	// doesn't copy base part
-	Derived(const Derived &derived) : m_c(derived.m_c) {}
+// v3
+template <typename Container, typename Index>
+decltype(auto) authAndAccess(Container &&c, Index i)
+{
+	return c[i];
+}
 
-private:
-	int m_c;
-};
+// v4, final c++14 version
+template <typename Container, typename Index>
+decltype(auto) authAndAccess(Container &&c, Index i)
+{
+	return std::forward<Container>(c)[i];
+}
 
 int main()
 {
-	Base b1(1, 2);
-	Base b2 = b1;
+	std::deque<int> d;
+	d.push_back(3);
+	d.push_back(26);
+	d.push_back(4);
+	d.push_back(1);
+	d.push_back(9);
 
-	std::cout << "b1: " << b1.a() << ' ' << b1.b() << '\n';
-	std::cout << "b2: " << b2.a() << ' ' << b2.b() << '\n';
+	// can use with v1, v3, v4
+	// can't use with v2, & is ignored
+	authAndAccess(d, 3) = 10;
 
-	Derived d1(10, 11, 12);
-	Derived d2 = d1;
-
-	std::cout << "d1: " << d1.a() << ' ' << d1.b() << ' ' << d1.c() << '\n';
-	std::cout << "d2: " << d2.a() << ' ' << d2.b() << ' ' << d2.c() << '\n';
+	int w;
+	const int &cw = w;
+	auto w1 = cw; // int
+	decltype(auto) w2 = cw; // const int &
 
 	std::cin.get();
 	return 0;
