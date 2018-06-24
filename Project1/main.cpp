@@ -1,24 +1,30 @@
 #include <iostream>
 
-// not UB
-// inits a, x, then b
-struct Wrinkle
+struct Aclash
 {
-	Wrinkle(int i) : a(++i), b(++i), x(++i)
-	{
-		std::cout << a << ' ' << b << ' ' << x << '\n';
-	}
-
-private:
+	Aclash() : a(4) {}
+protected:
 	int a;
-	int x;
-	int b;
+};
+
+struct Bclash
+{
+	Bclash() : a(5) {}
+protected:
+	int a;
+};
+
+struct Cclash : Aclash, Bclash
+{
+	Cclash()
+	{
+		std::cout << Aclash::a;
+	}
 };
 
 int main()
 {
-	Wrinkle w(0);
+	Cclash c;
 
 	std::cin.get();
-	return 0;
 }
