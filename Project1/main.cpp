@@ -1,29 +1,24 @@
 #include <iostream>
 
-//struct Reactor {
-//	double offset(double a, double b, double ff) {
-//		double a;
-//		// ...
-//		return a;
-//	}
-//	double offset(double a, double b) {
-//		return offset(a, b, 1.0); // default
-//	}
-//};
-
-struct Reactor
+// not UB
+// inits a, x, then b
+struct Wrinkle
 {
-	double offset(double a, double b, double ff = 1.0)
+	Wrinkle(int i) : a(++i), b(++i), x(++i)
 	{
-		double a;
-		// ...
-		return a;
+		std::cout << a << ' ' << b << ' ' << x << '\n';
 	}
-};
 
+private:
+	int a;
+	int x;
+	int b;
+};
 
 int main()
 {
+	Wrinkle w(0);
+
 	std::cin.get();
 	return 0;
 }
