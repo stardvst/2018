@@ -1,21 +1,22 @@
 #include <iostream>
-#include <gsl/gsl>
 
-int *ret(int n)
+struct base
 {
-	if (n > 5) return NULL;
-	auto ntt = new int(888);
-	return ntt;
-}
+	base() { std::cout << value() << std::endl; }
+	virtual ~base() {}
+	virtual const int value() const { return 0; }
+};
+
+struct derived : base
+{
+	//derived() { std::cout << value() << std::endl; }
+	const int value() const override { return 1; }
+};
 
 int main()
 {
-	int a = 5;
-	gsl::not_null<int *> p(&a);
-
-	std::cout << *p;
-
-	//p = nullptr;
+	derived d;
+	std::cout << d.value();
 
 	std::cin.get();
 }
