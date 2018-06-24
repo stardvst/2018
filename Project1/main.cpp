@@ -1,21 +1,29 @@
 #include <iostream>
 
-template typename T>
-class TD;
+//struct Reactor {
+//	double offset(double a, double b, double ff) {
+//		double a;
+//		// ...
+//		return a;
+//	}
+//	double offset(double a, double b) {
+//		return offset(a, b, 1.0); // default
+//	}
+//};
 
-template <typename T>
-void f(const T &param);
+struct Reactor
+{
+	double offset(double a, double b, double ff = 1.0)
+	{
+		double a;
+		// ...
+		return a;
+	}
+};
+
 
 int main()
 {
-	const int theAnswer = 42;
-
-	auto x = theAnswer; // int 
-	auto y = &theAnswer; // const int *
-
-	TD<decltype(x)> xType;
-	TD<decltype(y)> yType;
-
 	std::cin.get();
 	return 0;
 }
