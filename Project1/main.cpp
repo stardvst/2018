@@ -1,53 +1,65 @@
-//#include <iostream>
-//
-//int foo(int inValue, int &outValue) {
-//	outValue = 2 * inValue;
-//	return inValue * 3;
-//}
-//
-//int main() {
-//
-//	int number = 4; // useless but necessary
-//	int answer = foo(5, number);
-//
-//	// design issue - which is invalue, which - outvalue
-//
-//	std::cin.get();
-//	return 0;
-//}
-
-//struct twoNumbers {
-//	int value1;
-//	int value2;
-//};
-//
-//twoNumbers fooStruct(int invalue) {
-//	return { invalue * 2, invalue * 3 };
-//}
-//
-//int main() {
-//	int number, answer;
-//	twoNumbers result = fooStruct(6);
-//	number = result.value1; // what value1?
-//	answer = result.value2; // what value2?
-//}
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
-#include <tuple>
 
-std::tuple<int, int> fooTwo(int inValue)
+struct Number
 {
-	return { inValue * 2, inValue * 3 };
+	static Number *instance();
+
+	static void setType(const std::string &t)
+	{
+		type = t;
+		delete inst;
+		inst = nullptr;
+	}
+
+	virtual void setValue(int in) { value = in; }
+	virtual int getValue() const { return value; }
+
+protected:
+	int value;
+	Number() { std::cout << "ctor: "; }
+
+private:
+	static std::string type;
+	static Number *inst;
+};
+
+std::string Number::type = "decimal";
+Number *Number::inst = nullptr;
+
+struct Octal : Number
+{
+	friend struct Number;
+
+	void setValue(int in)
+	{
+		char buf[10];
+		sprintf(buf, "%o", in);
+		sscanf(buf, "%d", &value);
+	}
+protected:
+	Octal() {}
+};
+
+Number *Number::instance()
+{
+	if (!inst)
+		if (type == "octal")
+			inst = new Octal;
+		else
+			inst = new Number;
+	return inst;
 }
 
 int main()
 {
-	/*int number, answer;
-	std::tie(answer, number) = fooTwo(9);
-	*/
+	Number::instance()->setValue(42);
+	std::cout << "Value is " << Number::instance()->getValue() << '\n';
 
-	auto[answer, number] = fooTwo(9);
-	std::cout << answer << ' ' << number;
+	Number::setType("octal");
+	Number::instance()->setValue(64);
+	std::cout << "Value is " << Number::instance()->getValue() << '\n';
 
 	std::cin.get();
 }
