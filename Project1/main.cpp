@@ -1,29 +1,46 @@
 #include <iostream>
 
-class A
+struct Day
+{
+	explicit Day(int d) : val(d) {}
+	int val;
+};
+
+class Month
 {
 public:
-	A()
-	{
-		std::cout << "ctor\n";
-	}
+	static Month Jan() { return Month(1); }
+	static Month Feb() { return Month(2); }
+	static Month Mar() { return Month(3); }
 
-	~A()
-	{
-		std::cout << "dtor\n";
-	}
+private:
+	explicit Month(int m) : val(m) {}
+	int val;
+};
+
+struct Year
+{
+	explicit Year(int y) : val(y) {}
+	int val;
+};
+
+class Date
+{
+public:
+	// error prone: Date(3, 4, 1990)... what?;
+	Date(int month, int day, int year);
+
+	// better!
+	Date(const Month &m, const Day &d, const Year &y);
 };
 
 int main()
 {
-	auto ob = new A;
-	auto arr = new A[10];
+	//Date d1(30, 3, 1995);
 
-	// infinite loop of dtors
-	delete[] ob;
+	//Date d2(Day{ 30 }, Month{ 3 }, Year{ 1995 });
 
-	// exception
-	delete arr;
+	Date d3(Month::Mar(), Day{ 30 }, Year{ 1995 });
 
-	std::cin.get();ddddddddd
+	std::cin.get();
 }
