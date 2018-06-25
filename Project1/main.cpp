@@ -1,22 +1,29 @@
 #include <iostream>
 
-struct base
+class A
 {
-	base() { std::cout << value() << std::endl; }
-	virtual ~base() {}
-	virtual const int value() const { return 0; }
-};
+public:
+	A()
+	{
+		std::cout << "ctor\n";
+	}
 
-struct derived : base
-{
-	//derived() { std::cout << value() << std::endl; }
-	const int value() const override { return 1; }
+	~A()
+	{
+		std::cout << "dtor\n";
+	}
 };
 
 int main()
 {
-	derived d;
-	std::cout << d.value();
+	auto ob = new A;
+	auto arr = new A[10];
 
-	std::cin.get();
+	// infinite loop of dtors
+	delete[] ob;
+
+	// exception
+	delete arr;
+
+	std::cin.get();ddddddddd
 }
