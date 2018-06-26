@@ -1,37 +1,32 @@
-//#include <iostream>
-//
-//template <typename It>
-//void dwim(It b, It e)
-//{
-//	while (b != e)
-//		/* typename std::iterator_traits<it>::value_type */ auto curValue = *b;
-//}
-//
-//int main()
-//{
-//	
-//
-//	std::cin.get();
-//}
-
 #include <iostream>
+#include <memory>
+#include <map>
 
-class A
+template <typename It>
+void dwim(It b, It e)
 {
-public:
-	A(int) :i (new int) {}
-	const A& operator=(const A& o) const { i = new int; std::cout << "operator=" << std::endl; return *this; }
+	while (b != e)
+		//typename std::iterator_traits<it>::value_type curValue = *b;
+		auto curValue = *b;
+}
 
-private:
-	int* i;
-};
+class Widget {};
 
 int main()
 {
-	const A o(1);
-	A o_(2);
-	o = o_;
+	auto derefUPLess = [](const std::unique_ptr<Widget> &p1, const std::unique_ptr<Widget> &p2)
+	{
+		return *p1 < *p2;
+	};
+
+	auto derefLess = [](const auto &p1, const auto &p2) { return *p1 < *p2; };
+
+	std::map<std::string, int> m;
+	for (const std::pair<std::string, int> &p : m)
+	{
+		// wrong... pair type is std::pair<CONST std::string, int>
+		// => auto is better
+	}
 
 	std::cin.get();
 }
-
