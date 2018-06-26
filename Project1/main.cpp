@@ -1,37 +1,21 @@
-//#include <iostream>
-//
-//template <typename It>
-//void dwim(It b, It e)
-//{
-//	while (b != e)
-//		/* typename std::iterator_traits<it>::value_type */ auto curValue = *b;
-//}
-//
-//int main()
-//{
-//	
-//
-//	std::cin.get();
-//}
-
 #include <iostream>
 
 class A
 {
 public:
-	virtual void f() { std::cout << "A" << std::endl; }
-};
+	A(int) :i (new int) {}
+	const A& operator=(const A& o) const { *i = 7; std::cout << "operator=" << std::endl; return *this; }
 
-class B : public A
-{
 private:
-	void  f() override { std::cout << "B" << std::endl; }
+	int* i;
 };
 
 int main()
 {
-	A* p = new B;
-	p->f();
+	const A o(1);
+	A o_(2);
+	o = o_;
 
 	std::cin.get();
 }
+
