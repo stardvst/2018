@@ -1,14 +1,19 @@
 #include <iostream>
-
-struct A
-{
-	static A inst;
-};
+#include <memory>
 
 int main()
 {
-	A a;
-	std::cout << sizeof a;
+	auto p = std::make_unique<int>(64);
+
+	auto lambda = [ptr=move(p)]
+	{
+		std::cout << *ptr;
+	};
+	
+	lambda();
+
+	// can't use anymore...
+	// std::cout << *p;
 
 	std::cin.get();
 	return 0;
