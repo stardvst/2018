@@ -1,19 +1,20 @@
 #include <iostream>
-#include <memory>
+
+struct VClass
+{
+	int a;
+	int b;
+	virtual ~VClass() {}
+};
 
 int main()
 {
-	auto p = std::make_unique<int>(64);
+	VClass obj;
 
-	auto lambda = [ptr=move(p)]
-	{
-		std::cout << *ptr;
-	};
-	
-	lambda();
+	auto start_addr = reinterpret_cast<char *>(&obj);
+	auto a_addr = reinterpret_cast<char *>(&obj.a);
 
-	// can't use anymore...
-	// std::cout << *p;
+	std::cout << "vptr is at " << (start_addr == a_addr ? "end" : "start") << '\n';
 
 	std::cin.get();
 	return 0;
