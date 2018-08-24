@@ -6,7 +6,7 @@ int main()
 {
 	try
 	{
-		Vector<int> vector;
+		Simple::Vector<int> vector;
 		vector.insert(8);
 		vector.insert(3);
 		vector.insert(1);
