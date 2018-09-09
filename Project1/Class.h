@@ -28,14 +28,14 @@ public:
 
 	public:
 		Iterator() = default;
-		Iterator(Vector<T> *pVector, std::size_t nIndex) : m_pVector(pVector), m_nIndex(nIndex) {}
+		Iterator(T *pData, std::size_t nIndex) : m_pRawData(pData), m_nIndex(nIndex) {}
 
-		reference		operator*()						{ return (*m_pVector)[m_nIndex]; }
-		const reference &operator*()			const	{ return (*m_pVector)[m_nIndex]; }
-		pointer			operator->()					{ return &((*m_pVector)[m_nIndex]); }
-		const pointer	operator->()			const   { return &((*m_pVector)[m_nIndex]); }
-		reference		operator[](int offset)			{ return (*m_pVector)[m_nIndex + offset]; }
-		const reference operator[](int offset)	const	{ return (*m_pVector)[m_nIndex + offset]; }
+		reference		operator*()						{ return m_pRawData[m_nIndex]; }
+		const reference &operator*()			const	{ return m_pRawData[m_nIndex]; }
+		pointer			operator->()					{ return &m_pRawData[m_nIndex]; }
+		const pointer	operator->()			const   { return &m_pRawData[m_nIndex]; }
+		reference		operator[](int offset)			{ return m_pRawData[m_nIndex + offset]; }
+		const reference operator[](int offset)	const	{ return m_pRawData[m_nIndex + offset]; }
 
 		Iterator &operator++()		{ ++m_nIndex; return *this; }
 		Iterator &operator--()		{ --m_nIndex; return *this; }
@@ -61,7 +61,7 @@ public:
 		bool operator!=	(const Iterator &other)	const	{ return m_nIndex != other.m_nIndex; }
 
 	private:
-		Vector<value_type> *m_pVector = nullptr;
+		T *m_pRawData{ nullptr };
 		std::size_t m_nIndex = 0;
 	};
 
@@ -86,7 +86,7 @@ private:
 	void allocateMemory();
 
 private:
-	std::unique_ptr<value_type[]> m_pData{ nullptr };
+	std::shared_ptr<value_type[]> m_pData{ nullptr };
 	std::size_t m_nSize = 0;
 	std::size_t m_nCapacity = 0;
 };
@@ -138,13 +138,13 @@ typename const Vector<T>::reference Vector<T>::operator[](std::size_t nIndex) co
 template <typename T>
 typename Vector<T>::Iterator Vector<T>::begin()
 {
-	return Vector<T>::Iterator{ this, 0 };
+	return Vector<T>::Iterator{ m_pData.get(), 0 };
 }
 
 template <typename T>
 typename Vector<T>::Iterator Vector<T>::end()
 {
-	return Vector<T>::Iterator{ this, m_nSize };
+	return Vector<T>::Iterator{ m_pData.get(), m_nSize };
 }
 
 template <typename T>
