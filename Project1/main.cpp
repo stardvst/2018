@@ -1,29 +1,25 @@
 #include <iostream>
 #include <vector>
 
-using byVal = struct
+struct A
 {
-	int arr[10];
-};
+	void foo()
+	{
+		static int i;
+		++i;
 
-void f(byVal a)
-{
-	std::cout << a.arr[0] << '\n';
-	std::cout << &a << '\n';
-	a.arr[0] = 10;
-	std::cout << a.arr[0] << '\n';
-}
+		std::cout << i << '\n';
+	}
+};
 
 int main()
 {
-	byVal a;
-	a.arr[0] = 5;
+	A o1, o2, o3;
 
-	std::cout << &a << ' ' << a.arr[0] << '\n';
-
-	f(a);
-
-	std::cout << a.arr[0] << '\n';
+	o1.foo();
+	o2.foo();
+	o3.foo();
+	o1.foo();
 
 	std::cin.get();
 	return 0;
