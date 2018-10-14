@@ -1,25 +1,29 @@
 #include <iostream>
+#include <vector>
 
-#include "Class.h"
+using byVal = struct
+{
+	int arr[10];
+};
+
+void f(byVal a)
+{
+	std::cout << a.arr[0] << '\n';
+	std::cout << &a << '\n';
+	a.arr[0] = 10;
+	std::cout << a.arr[0] << '\n';
+}
 
 int main()
 {
-	try
-	{
-		Simple::Vector<int> vector;
-		vector.insert(8);
-		vector.insert(3);
-		vector.insert(1);
-		vector.insert(7);
-		vector.insert(2);
+	byVal a;
+	a.arr[0] = 5;
 
-		for (auto i : vector)
-			std::cout << i << std::endl;
-	}
-	catch (const std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
+	std::cout << &a << ' ' << a.arr[0] << '\n';
+
+	f(a);
+
+	std::cout << a.arr[0] << '\n';
 
 	std::cin.get();
 	return 0;
