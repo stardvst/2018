@@ -1,75 +1,109 @@
-
 #include <iostream>
+#include <chrono>
 
 template <typename T>
-class AutoPtr final
+class DynamicArray
 {
 public:
-	explicit AutoPtr(T *p = nullptr) : ptr(p) {}
-	~AutoPtr() { delete ptr; }
+	DynamicArray(int l) : array(new T[l]), length(l) {}
+	~DynamicArray() { delete array; }
 
-	//AutoPtr(const AutoPtr &a)
+	//DynamicArray(const DynamicArray &arr)
+	//	: length(arr.length)
 	//{
-	//	ptr = new T;
-	//	*ptr = *a.ptr;
+	//	array = new T[length];
+	//	for (int i = 0; i < length; ++i)
+	//		array[i] = arr.array[i];
 	//}
 
-	//AutoPtr &operator=(const AutoPtr &a)
+	//DynamicArray& operator=(const DynamicArray &arr)
 	//{
-	//	if (&a == this) return *this;
+	//	if (&arr == this)
+	//		return *this;
 
-	//	delete ptr;
-	//	ptr = new T;
-	//	*ptr = *a.ptr;
+	//	delete[] array;
+
+	//	length = arr.length;
+	//	array = new T[length];
+
+	//	for (int i = 0; i < length; ++i)
+	//		array[i] = arr.array[i];
 
 	//	return *this;
 	//}
 
-	AutoPtr(const AutoPtr &a) = delete;
-	AutoPtr &operator=(const AutoPtr &a) = delete;
+		// Copy constructor
+	DynamicArray(const DynamicArray &arr) = delete;
 
-	AutoPtr(AutoPtr &&a) noexcept
+	// Copy assignment
+	DynamicArray& operator=(const DynamicArray &arr) = delete;
+
+	// Move constructor
+	DynamicArray(DynamicArray &&arr)
+		: length(arr.length), array(arr.array)
 	{
-		ptr = a.ptr;
-		a.ptr = nullptr;
+		arr.length = 0;
+		arr.array = nullptr;
 	}
 
-	AutoPtr &operator=(AutoPtr &&a) noexcept
+	// Move assignment
+	DynamicArray& operator=(DynamicArray &&arr)
 	{
-		if (&a == this) return *this;
+		if (&arr == this)
+			return *this;
 
-		delete ptr;
-		ptr = a.ptr;
-		a.ptr = nullptr;
+		delete[] array;
+
+		length = arr.length;
+		array = arr.array;
+		arr.length = 0;
+		arr.array = nullptr;
 
 		return *this;
 	}
 
-	T &operator*() const { return *ptr; }
-	T *operator->() const { return ptr; }
-	bool isNull() const { return !ptr; }
+	int getLength() const { return length; }
+	T& operator[](int index) { return array[index]; }
+	const T& operator[](int index) const { return array[index]; }
 
 private:
-	T *ptr;
+	T *array;
+	int length;
 };
 
-class Resource final
+class Timer
 {
+	using clock_t = std::chrono::high_resolution_clock;
+	using second_t = std::chrono::duration<double, std::ratio<1> >;
+	std::chrono::time_point<clock_t> m_beg;
+
 public:
-	Resource() { std::cout << "Resource acquired\n"; }
-	~Resource() { std::cout << "Resource destroyed\n"; }
+	Timer() : m_beg(clock_t::now()) {}
+	void reset() { m_beg = clock_t::now();}
+	double elapsed() const {return std::chrono::duration_cast<second_t>(clock_t::now() - m_beg).count();}
 };
 
-AutoPtr<Resource> generate()
+DynamicArray<int> cloneArrayAndDouble(const DynamicArray<int> &arr)
 {
-	AutoPtr<Resource> res(new Resource);
-	return res;
+	DynamicArray<int> dbl(arr.getLength());
+	for (int i = 0; i < arr.getLength(); ++i)
+		dbl[i] = arr[i] * 2;
+
+	return dbl;
 }
 
 int main()
 {
-	AutoPtr<Resource> res;
-	res = generate();
+	Timer t;
+
+	DynamicArray<int> arr(1000000);
+
+	for (int i = 0; i < arr.getLength(); i++)
+		arr[i] = i;
+
+	arr = cloneArrayAndDouble(arr);
+
+	std::cout << t.elapsed();
 
 	system("pause");
 	return 0;
