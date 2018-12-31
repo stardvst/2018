@@ -1,109 +1,61 @@
 #include <iostream>
-#include <chrono>
+#include <utility>
 
-template <typename T>
-class DynamicArray
+//struct foo
+//{
+//	void test() { std::cout << "test" << std::endl; }
+//	void test() const { std::cout << "test const" << std::endl; }
+//
+//private:
+//	int a{};
+//};
+//
+//int main()
+//{
+//	foo f1;
+//	f1.test();     // prints "test"
+//
+//	foo const f2;
+//	f2.test();     // prints "test const"
+//
+//	foo().test();
+//
+//	system("pause");
+//	return 0;
+//}
+
+struct Widget final
 {
-public:
-	DynamicArray(int l) : array(new T[l]), length(l) {}
-	~DynamicArray() { delete array; }
-
-	//DynamicArray(const DynamicArray &arr)
-	//	: length(arr.length)
-	//{
-	//	array = new T[length];
-	//	for (int i = 0; i < length; ++i)
-	//		array[i] = arr.array[i];
-	//}
-
-	//DynamicArray& operator=(const DynamicArray &arr)
-	//{
-	//	if (&arr == this)
-	//		return *this;
-
-	//	delete[] array;
-
-	//	length = arr.length;
-	//	array = new T[length];
-
-	//	for (int i = 0; i < length; ++i)
-	//		array[i] = arr.array[i];
-
-	//	return *this;
-	//}
-
-		// Copy constructor
-	DynamicArray(const DynamicArray &arr) = delete;
-
-	// Copy assignment
-	DynamicArray& operator=(const DynamicArray &arr) = delete;
-
-	// Move constructor
-	DynamicArray(DynamicArray &&arr)
-		: length(arr.length), array(arr.array)
-	{
-		arr.length = 0;
-		arr.array = nullptr;
-	}
-
-	// Move assignment
-	DynamicArray& operator=(DynamicArray &&arr)
-	{
-		if (&arr == this)
-			return *this;
-
-		delete[] array;
-
-		length = arr.length;
-		array = arr.array;
-		arr.length = 0;
-		arr.array = nullptr;
-
-		return *this;
-	}
-
-	int getLength() const { return length; }
-	T& operator[](int index) { return array[index]; }
-	const T& operator[](int index) const { return array[index]; }
+	explicit Widget(std::string name) : m_name(std::move(name)) {};
+	~Widget() = default;
+	Widget(const Widget &w) { std::cout << "copy" << std::endl; m_name = w.m_name; }
+	Widget &operator=(const Widget &w) { std::cout << "copy assign" << std::endl; m_name = w.m_name; return *this; }
+	Widget(Widget&& w) noexcept { std::cout << "move" << std::endl; m_name = std::move(w.m_name); }
+	Widget &operator=(Widget &&w) noexcept { std::cout << "move assign" << std::endl; m_name = std::move(w.m_name); return *this; }
 
 private:
-	T *array;
-	int length;
+	std::string m_name;
 };
 
-class Timer
+struct bar
 {
-	using clock_t = std::chrono::high_resolution_clock;
-	using second_t = std::chrono::duration<double, std::ratio<1> >;
-	std::chrono::time_point<clock_t> m_beg;
+	Widget &data() & { return m_widget; }
+	Widget &&data() && { return std::move(m_widget); }
+	const Widget &data() const & { return m_widget; }
 
-public:
-	Timer() : m_beg(clock_t::now()) {}
-	void reset() { m_beg = clock_t::now();}
-	double elapsed() const {return std::chrono::duration_cast<second_t>(clock_t::now() - m_beg).count();}
+private:
+	Widget m_widget{ "bar" };
 };
-
-DynamicArray<int> cloneArrayAndDouble(const DynamicArray<int> &arr)
-{
-	DynamicArray<int> dbl(arr.getLength());
-	for (int i = 0; i < arr.getLength(); ++i)
-		dbl[i] = arr[i] * 2;
-
-	return dbl;
-}
 
 int main()
 {
-	Timer t;
+	bar b1;
+	auto w1 = b1.data();
 
-	DynamicArray<int> arr(1000000);
+	const bar b2;
+	const auto& w2 = b2.data();
 
-	for (int i = 0; i < arr.getLength(); i++)
-		arr[i] = i;
-
-	arr = cloneArrayAndDouble(arr);
-
-	std::cout << t.elapsed();
+	auto w3 = bar().data();
 
 	system("pause");
 	return 0;
